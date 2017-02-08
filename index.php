@@ -5,7 +5,6 @@
     <meta charset="UTF-8">
 </head>
 <body>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 <script type="text/javascript">
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {
@@ -19,26 +18,29 @@
             testAPI();
         } else if (response.status === 'not_authorized') {
             // The person is logged into Facebook, but not your app.
-            document.getElementById('status').innerHTML = '<a href="javascript:;" class="loginBtn" onclick="checkLoginState();">Log In</a><br />'+'Please log into this app.';
+            document.getElementById('status').innerHTML = '<a href="javascript:;" onclick="fbLogin();">Log In</a><br />'+'Please log into this app.';
         } else {
             // The person is not logged into Facebook, so we're not sure if
             // they are logged into this app or not.
-            document.getElementById('status').innerHTML = '<a href="javascript:;" class="loginBtn" onclick="checkLoginState();">Log In</a><br />'+'Please log into Facebook.';
+            document.getElementById('status').innerHTML = '<a href="javascript:;" onclick="fbLogin();">Log In</a><br />'+'Please log into Facebook.';
         }
     }
 
     // This function is called when someone finishes with the Login
     // Button.  See the onlogin handler attached to it in the sample
     // code below.
-    function checkLoginState() {
+    function fbLogin() {
         FB.login(function(response) {
+            console.log('Start of response after fb.login function');
+            console.log(response);
             if (response.authResponse) {
-                //user just authorized your app
-                //document.getElementById('loginBtn').style.display = 'none';
+                statusChangeCallback(response);
             }
         }, {scope: 'email,public_profile'});
-        FB.getLoginStatus(function(response) {
-            console.log(response);
+    }
+
+    function fbLogout() {
+        FB.logout(function (response) {
             statusChangeCallback(response);
         });
     }
@@ -46,8 +48,7 @@
     window.fbAsyncInit = function() {
         FB.init({
             appId      : '201789086951728',
-            cookie     : true,  // enable cookies to allow the server to access
-                                // the session
+            cookie     : true,  // enable cookies to allow the server to access the session
             xfbml      : true,  // parse social plugins on this page
             version    : 'v2.8' // use graph api version 2.8
         });
@@ -99,18 +100,10 @@
             if(response.birthday){
                 op += '<br />Birthday: '+response.birthday;
             }
-            document.getElementById('status').innerHTML = op + '<br /><a href="javascript:;" class="loginBtn" onclick="checkLoginState();">Log Out</a>';
+            document.getElementById('status').innerHTML = op + '<br /><a href="javascript:;" onclick="fbLogout()">Log Out</a>';
         });
     }
 </script>
-
-<!--
-  Below we include the Login Button social plugin. This button uses
-  the JavaScript SDK to present a graphical Login button that triggers
-  the FB.login() function when clicked.
--->
-
-<!--<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">Login in my account</fb:login-button>-->
 
 <div id="status">
 </div>
