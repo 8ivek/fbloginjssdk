@@ -5,11 +5,11 @@
     <meta charset="UTF-8">
 </head>
 <body>
-<script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
+<script type="text/javascript">
     // This is called with the results from from FB.getLoginStatus().
     function statusChangeCallback(response) {
-        console.log('statusChangeCallback');
-        console.log(response);
+        //console.log(response);
         // The response object is returned with a status field that lets the
         // app know the current login status of the person.
         // Full docs on the response object can be found in the documentation
@@ -19,13 +19,11 @@
             testAPI();
         } else if (response.status === 'not_authorized') {
             // The person is logged into Facebook, but not your app.
-            document.getElementById('status').innerHTML = 'Please log ' +
-                'into this app.';
+            document.getElementById('status').innerHTML = '<a href="javascript:;" class="loginBtn" onclick="checkLoginState();">Log In</a><br />'+'Please log into this app.';
         } else {
             // The person is not logged into Facebook, so we're not sure if
             // they are logged into this app or not.
-            document.getElementById('status').innerHTML = 'Please log ' +
-                'into Facebook.';
+            document.getElementById('status').innerHTML = '<a href="javascript:;" class="loginBtn" onclick="checkLoginState();">Log In</a><br />'+'Please log into Facebook.';
         }
     }
 
@@ -33,7 +31,14 @@
     // Button.  See the onlogin handler attached to it in the sample
     // code below.
     function checkLoginState() {
+        FB.login(function(response) {
+            if (response.authResponse) {
+                //user just authorized your app
+                //document.getElementById('loginBtn').style.display = 'none';
+            }
+        }, {scope: 'email,public_profile'});
         FB.getLoginStatus(function(response) {
+            console.log(response);
             statusChangeCallback(response);
         });
     }
@@ -94,7 +99,7 @@
             if(response.birthday){
                 op += '<br />Birthday: '+response.birthday;
             }
-            document.getElementById('status').innerHTML = op;
+            document.getElementById('status').innerHTML = op + '<br /><a href="javascript:;" class="loginBtn" onclick="checkLoginState();">Log Out</a>';
         });
     }
 </script>
@@ -105,8 +110,7 @@
   the FB.login() function when clicked.
 -->
 
-<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">
-</fb:login-button>
+<!--<fb:login-button scope="public_profile,email" onlogin="checkLoginState();">Login in my account</fb:login-button>-->
 
 <div id="status">
 </div>
